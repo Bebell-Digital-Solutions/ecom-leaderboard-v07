@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - eCOMLeaderboard 2025</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>eCOMLeaderboard 2025</h2>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="leaderboard.html" class="nav-link">Leaderboard</a>
+                <a href="backend.html" class="nav-link active">Admin Panel</a>
+                <a href="#" onclick="logout()" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="leaderboard-header">
+            <h1>🛡️ Admin Panel</h1>
+            <p>Manage all registered store accounts and global settings.</p>
+        </div>
+        
+        <div class="global-settings-card">
+             <h3><i data-lucide="settings" class="lucide-icon"></i> Global Settings</h3>
+             <form id="settingsForm" class="settings-form">
+                 <div class="form-group">
+                     <label for="exchangeRate">USD to DOP Exchange Rate</label>
+                     <input type="number" id="exchangeRate" step="0.01" required>
+                 </div>
+                 <button type="submit" class="btn btn-primary">Save Settings</button>
+             </form>
+        </div>
+
+
+        <div class="leaderboard-table">
+            <div class="admin-table-header wide">
+                <div>Store</div>
+                <div>Contact</div>
+                <div>Currency</div>
+                <div>Store ID</div>
+                <div>API Key</div>
+                <div>Total Revenue (DOP)</div>
+                <div>Orders</div>
+                <div>Created</div>
+                <div>Actions</div>
+            </div>
+            <div id="adminTableContent" class="table-content">
+                <!-- Store entries will be populated here by backend.js -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Store Modal -->
+    <div id="editStoreModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Store</h2>
+                <button onclick="closeEditModal()" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editStoreForm">
+                    <input type="hidden" id="editStoreId">
+                    <div class="form-group">
+                        <label for="editStoreName">Store Name</label>
+                        <input type="text" id="editStoreName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStoreUrl">Store URL</label>
+                        <input type="url" id="editStoreUrl" placeholder="https://yourstore.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStoreEmail">Email Address</label>
+                        <input type="email" id="editStoreEmail" required>
+                    </div>
+                    <div class="form-group">
+                         <label for="editCurrency">Store Currency</label>
+                         <select id="editCurrency" class="form-group input" required>
+                             <option value="DOP">Dominican Peso (DOP)</option>
+                             <option value="USD">US Dollar (USD)</option>
+                         </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" onclick="closeEditModal()" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+    <script src="backend.js"></script>
+</body>
+</html>

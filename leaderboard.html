@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Leaderboard - eCOMLeaderboard 2025</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>eCOMLeaderboard 2025</h2>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="leaderboard.html" class="nav-link active">Leaderboard</a>
+                <a href="#" onclick="logout()" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="leaderboard-header">
+            <h1>🏆 Global E-commerce Leaderboard</h1>
+            <p>Top performing stores of all time</p>
+            <div class="leaderboard-stats">
+                <div class="total-stat">
+                    <span class="stat-number" id="totalStores">0</span>
+                    <span class="stat-label">Active Stores</span>
+                </div>
+                <div class="total-stat">
+                    <span class="stat-number" id="totalOrdersValue">0</span>
+                    <span class="stat-label">Combined Orders</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="globalStatsContainer">
+            <!-- Global Stats Chart will be rendered here -->
+        </div>
+
+        <div class="leaderboard-filters">
+            <div class="filter-tabs">
+                <button class="filter-btn active" onclick="filterLeaderboard(event, 'performance')">By Performance</button>
+                <button class="filter-btn" onclick="filterLeaderboard(event, 'orders')">By Orders</button>
+                <button class="filter-btn" onclick="filterLeaderboard(event, 'growth')">By Growth</button>
+            </div>
+            <div class="time-filter">
+                <select id="timeFilter" onchange="updateTimeFilter()">
+                    <option value="all">All Time</option>
+                    <option value="month" disabled>This Month (coming soon)</option>
+                    <option value="week" disabled>This Week (coming soon)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="leaderboard-container">
+            <div class="podium">
+                <div class="podium-item" id="secondPlace">
+                    <div class="podium-box second">
+                        <div class="podium-medal">🥈</div>
+                        <div class="podium-rank">2</div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>-</h3>
+                        <p>RD$ 0</p>
+                    </div>
+                </div>
+                <div class="podium-item" id="firstPlace">
+                    <div class="podium-box first">
+                        <div class="podium-medal">🥇</div>
+                        <div class="podium-rank">1</div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>-</h3>
+                        <p>RD$ 0</p>
+                    </div>
+                </div>
+                <div class="podium-item" id="thirdPlace">
+                    <div class="podium-box third">
+                        <div class="podium-medal">🥉</div>
+                        <div class="podium-rank">3</div>
+                    </div>
+                    <div class="podium-info">
+                        <h3>-</h3>
+                        <p>RD$ 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="leaderboard-list">
+                <div class="leaderboard-table">
+                    <div class="table-header">
+                        <div class="col-rank">Rank</div>
+                        <div class="col-store">Store</div>
+                        <div class="col-revenue">Performance Score</div>
+                        <div class="col-orders">Orders</div>
+                        <div class="col-growth">Growth</div>
+                    </div>
+                    <div id="leaderboardContent" class="table-content">
+                        <!-- Leaderboard entries will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="join-section">
+            <div class="join-card">
+                <h3>🚀 Join the Competition</h3>
+                <p>Connect your e-commerce store and start competing with the best!</p>
+                <a href="index.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+        
+        <div class="join-section admin-only">
+            <div class="join-card admin-section">
+                <h3><i data-lucide="shield-alert" class="lucide-icon"></i> Admin Actions</h3>
+                <p>This will delete all stores and transactions, resetting the application to its initial demo state. This action cannot be undone.</p>
+                <button onclick="resetLeaderboardData()" class="btn btn-danger">Reset All Data</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="app-footer">
+        <div class="nav-container">
+            <p>&copy; 2024 eCOMLeaderboard 2025. All rights reserved.</p>
+            <a href="backend.html" class="footer-link admin-only">Admin Panel</a>
+        </div>
+    </footer>
+
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="app.js"></script>
+    <script src="leaderboard.js"></script>
+</body>
+</html>
