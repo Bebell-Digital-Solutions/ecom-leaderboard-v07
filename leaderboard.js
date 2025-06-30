@@ -1,4 +1,5 @@
 
+
 // Leaderboard functionality
 class LeaderboardManager {
     constructor() {
