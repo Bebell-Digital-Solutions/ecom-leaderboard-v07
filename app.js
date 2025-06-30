@@ -14,11 +14,11 @@ class DataStore {
     initializeDemoData() {
         if (this.stores.length === 0) {
             const demoStores = [
-                { id: '1001', name: 'ElectroMundo', email: 'demo@electromundo.com', url: 'https://electromundo.com', currency: 'DOP'},
-                { id: '1002', name: 'Moda Caribeña', email: 'demo@modacaribe.com', url: 'https://modacaribe.com', currency: 'DOP'},
-                { id: '1003', name: 'USA Gadgets', email: 'demo@usagadgets.com', url: 'https://usagadgets.com', currency: 'USD'},
-                { id: '1004', name: 'Deportes Total', email: 'demo@deportestotal.com', url: 'https://deportestotal.com', currency: 'DOP'},
-                { id: '1005', name: 'Belleza Tropical', email: 'demo@bellezatropical.com', url: 'https://bellezatropical.com', currency: 'USD'},
+                { id: '106401', name: 'ElectroMundo', email: 'demo@electromundo.com', url: 'https://electromundo.com', currency: 'DOP'},
+                { id: '135002', name: 'Moda Caribeña', email: 'demo@modacaribe.com', url: 'https://modacaribe.com', currency: 'DOP'},
+                { id: '108403', name: 'USA Gadgets', email: 'demo@usagadgets.com', url: 'https://usagadgets.com', currency: 'USD'},
+                { id: '105004', name: 'Deportes Total', email: 'demo@deportestotal.com', url: 'https://deportestotal.com', currency: 'DOP'},
+                { id: '109905', name: 'Belleza Tropical', email: 'demo@bellezatropical.com', url: 'https://bellezatropical.com', currency: 'USD'},
             ];
 
             this.stores = demoStores.map((store, i) => ({
