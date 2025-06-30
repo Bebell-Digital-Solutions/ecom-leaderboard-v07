@@ -1,3 +1,4 @@
+
 // Security check: Redirect non-admins immediately.
 if (sessionStorage.getItem('isAdmin') !== 'true') {
     alert('Access Denied: You must be an administrator to view this page.');
@@ -48,6 +49,11 @@ class BackendManager {
         this.renderTable(); // Re-render table to reflect new rate
     }
 
+    formatUrl(url) {
+        if (!url) return '';
+        return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    }
+
     renderTable() {
         const stores = this.dataStore.getAllStores();
         this.tableContent.innerHTML = ''; 
@@ -62,14 +68,12 @@ class BackendManager {
             const row = document.createElement('div');
             row.className = 'admin-table-row wide';
             row.innerHTML = `
-                <div>${store.name}</div>
                 <div>${store.email}</div>
-                <div>${store.currency}</div>
                 <div>${store.id}</div>
-                <div class="api-key">${store.apiKey}</div>
-                <div>${formatCurrency(stats.totalRevenueDOP, 'DOP')}</div>
+                <div><a href="${store.url}" title="${store.url}" target="_blank" rel="noopener noreferrer">${this.formatUrl(store.url)}</a></div>
+                <div>${store.currency}</div>
                 <div>${stats.totalOrders.toLocaleString()}</div>
-                <div>${new Date(store.createdAt).toLocaleDateString()}</div>
+                <div>${formatCurrency(stats.totalRevenueDOP, 'DOP')}</div>
                 <div class="admin-actions">
                     <button class="btn-icon btn-edit" onclick="backendManager.handleEdit('${store.id}')">
                         <i data-lucide="edit"></i> Edit
