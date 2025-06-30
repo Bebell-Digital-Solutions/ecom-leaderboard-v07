@@ -6,11 +6,6 @@ class LeaderboardManager {
         this.dataStore = null; 
         this.currentFilter = 'performance';
         this.currentTimeFilter = 'all';
-        this.championTargets = [
-            { name: "Reina del Caribe", revenue: 10000000 },
-            { name: "El Titán de Quisqueya", revenue: 5000000 },
-            { name: "La Perla de las Antillas", revenue: 1000000 }
-        ];
     }
 
     initialize() {
@@ -49,7 +44,7 @@ class LeaderboardManager {
             return { ...store, ...stats, growth };
         });
 
-        const overallAverageDailyRevenue = allStoresStats.reduce((sum, s) => sum + s.growth, 0) / allStoresStats.length;
+        const overallAverageDailyRevenue = allStoresStats.length > 0 ? allStoresStats.reduce((sum, s) => sum + s.growth, 0) / allStoresStats.length : 0;
 
         const storesWithGrowthPercent = allStoresStats.map(store => {
             const growthPercent = overallAverageDailyRevenue > 0 
@@ -70,19 +65,8 @@ class LeaderboardManager {
                 break;
         }
 
-        let podiumStores = [...this.championTargets];
-        let remainingStores = [...storesWithGrowthPercent];
-        let tableStores = [];
-
-        podiumStores.forEach((champion, index) => {
-            const contenderIndex = remainingStores.findIndex(s => s.totalRevenueDOP > champion.revenue);
-            if (contenderIndex > -1) {
-                podiumStores[index] = remainingStores[contenderIndex];
-                remainingStores.splice(contenderIndex, 1);
-            }
-        });
-        
-        tableStores = remainingStores.sort((a, b) => b.totalRevenueDOP - a.totalRevenueDOP);
+        const podiumStores = storesWithGrowthPercent.slice(0, 3);
+        const tableStores = storesWithGrowthPercent.slice(3);
         
         return { podiumStores, tableStores };
     }
@@ -100,8 +84,11 @@ class LeaderboardManager {
             const store = stores[index];
             if (store) {
                 info.querySelector('h3').textContent = store.name;
-                // Display performance score instead of currency
-                info.querySelector('p').textContent = this.formatPerformanceScore(store.totalRevenueDOP || store.revenue);
+                info.querySelector('p').textContent = this.formatPerformanceScore(store.totalRevenueDOP);
+            } else {
+                // Reset to default if no store for this podium spot
+                info.querySelector('h3').textContent = '-';
+                info.querySelector('p').textContent = 'RD$ 0';
             }
         });
     }
@@ -157,18 +144,6 @@ function updateTimeFilter() {
     if (!leaderboardManager) return;
     leaderboardManager.currentTimeFilter = document.getElementById('timeFilter').value;
     leaderboardManager.updateLeaderboard();
-}
-
-function resetLeaderboardData() {
-    const confirmation = confirm('Are you sure you want to reset all data? This cannot be undone.');
-    if (confirmation) {
-        localStorage.removeItem('ecomLeaderStores');
-        localStorage.removeItem('ecomLeaderTransactions');
-        localStorage.removeItem('ecomLeaderSettings');
-        localStorage.removeItem('ecomLeaderboardTracking');
-        logout();
-        alert('All data has been reset.');
-    }
 }
 
 document.addEventListener('appReady', function() {
