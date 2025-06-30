@@ -281,7 +281,7 @@ input[type=number] {
 
 /* Join & Admin Section */
 .join-section { margin-top: 40px; text-align: center; }
-.join-card { background: var(--bg-primary); border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); max-width: 500px; margin: 0 auto; }
+.join-card { background: var(--bg-primary); border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); max-width: 780px; margin: 0 auto; }
 .join-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
 .join-card p { color: var(--text-secondary); margin-bottom: 24px; font-size: 16px; }
 .join-card .btn { width: auto; padding: 12px 32px; }
@@ -322,7 +322,7 @@ input[type=number] {
 .modal-footer .btn { width: auto; }
 
 /* Global Stats Chart */
-.stats-chart-card { background-color: var(--bg-primary); border-radius: 16px; padding: 24px; margin-top: 40px; box-shadow: var(--shadow-lg); }
+.stats-chart-card { background-color: var(--bg-primary); border-radius: 16px; padding: 24px; margin-top: 40px; margin-bottom: 40px; box-shadow: var(--shadow-lg); }
 .stats-chart-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
 .stats-chart-container { display: flex; flex-direction: column; gap: 16px; }
 .chart-item { display: grid; grid-template-columns: 120px 1fr 100px; align-items: center; gap: 12px; font-size: 14px; }
