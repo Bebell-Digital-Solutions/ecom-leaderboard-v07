@@ -158,7 +158,7 @@ function compactCurrency(value, currency) {
 // --- EMAIL NOTIFICATION SERVICE ---
 function initializeEmailService() {
     try {
-        emailjs.init({ publicKey: 'YOUR_PUBLIC_KEY' });
+        emailjs.init({ publicKey: 'pzi6GkEVpxFMX_PUe' });
     } catch(e) {
         console.warn("EmailJS not configured. Add credentials to app.js.");
     }
@@ -175,8 +175,8 @@ function sendNewRegistrationEmail(storeData) {
         store_url: storeData.url,
         registration_date: new Date().toUTCString(),
     };
-    const serviceID = 'YOUR_SERVICE_ID';
-    const templateID = 'YOUR_TEMPLATE_ID';
+    const serviceID = 'El_Negocio_Digital';
+    const templateID = 'pzi6GkEVpxFMX_PUe';
     emailjs.send(serviceID, templateID, templateParams)
         .then(res => console.log('New registration email sent.', res.status))
         .catch(err => console.error('Failed to send registration email.', err));
