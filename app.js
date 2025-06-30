@@ -37,7 +37,7 @@ class DataStore {
                         id: `tx_${store.id}_${i}`,
                         storeId: store.id,
                         amount: amount,
-                        timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString()
+                        timestamp: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString()
                     });
                 }
                 return txs;
@@ -364,37 +364,63 @@ function renderGlobalStatsChart(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    const totalStores = dataStore.stores.length;
-    const totalTransactions = dataStore.transactions.length;
-    const totalSalesDOP = dataStore.stores.reduce((total, store) => {
-        return total + dataStore.getStoreStats(store.id).totalRevenueDOP;
-    }, 0);
+    // 1. Prepare data structure for the last 12 months
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyData = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        monthlyData.push({
+            year: date.getFullYear(),
+            month: date.getMonth(),
+            label: monthNames[date.getMonth()],
+            totalSales: 0
+        });
+    }
 
-    const stats = [
-        { label: 'Total Stores', value: totalStores, color: '#8B5CF6' },
-        { label: 'Total Transactions', value: totalTransactions, color: '#3B82F6' },
-        { label: 'Total Sales (DOP)', value: totalSalesDOP, color: '#10B981', isCurrency: true }
-    ];
+    // 2. Pre-process stores for quick lookup
+    const storeMap = new Map(dataStore.stores.map(s => [s.id, { currency: s.currency }]));
 
-    const maxValue = Math.max(...stats.filter(s => !s.isCurrency).map(s => s.value), 1);
-    const maxCurrencyValue = Math.max(...stats.filter(s => s.isCurrency).map(s => s.value), 1);
+    // 3. Aggregate transaction data
+    dataStore.transactions.forEach(tx => {
+        const txDate = new Date(tx.timestamp);
+        const txYear = txDate.getFullYear();
+        const txMonth = txDate.getMonth();
 
+        const monthBucket = monthlyData.find(d => d.year === txYear && d.month === txMonth);
+        if (monthBucket) {
+            const store = storeMap.get(tx.storeId);
+            let saleInDOP = tx.amount;
+            if (store && store.currency === 'USD') {
+                saleInDOP = tx.amount * dataStore.exchangeRate;
+            }
+            monthBucket.totalSales += saleInDOP;
+        }
+    });
+
+    // 4. Find max value for scaling bar heights
+    const maxSale = Math.max(...monthlyData.map(d => d.totalSales));
+
+    // 5. Generate HTML for the new monthly chart
     const chartHTML = `
         <div class="stats-chart-card">
-            <h3><i data-lucide="bar-chart-big" class="lucide-icon"></i> Overall Platform Stats</h3>
-            <div class="stats-chart-container">
-                ${stats.map(stat => `
-                    <div class="chart-item">
-                        <div class="chart-label">${stat.label}</div>
-                        <div class="chart-bar-wrapper">
-                            <div class="chart-bar" style="width: ${stat.isCurrency ? (stat.value / maxCurrencyValue * 100) : (stat.value / maxValue * 100)}%; background-color: ${stat.color};"></div>
+            <h3><i data-lucide="bar-chart-big" class="lucide-icon"></i> Monthly Revenue (Last 12 Months)</h3>
+            <div class="monthly-chart-container">
+                ${monthlyData.map(data => {
+                    const barHeight = maxSale > 0 ? (data.totalSales / maxSale) * 100 : 0;
+                    return `
+                    <div class="monthly-chart-item">
+                        <div class="monthly-chart-value">${formatCurrency(data.totalSales, 'DOP')}</div>
+                        <div class="monthly-chart-bar-wrapper" title="${data.label} ${data.year}: ${formatCurrency(data.totalSales, 'DOP')}">
+                            <div class="monthly-chart-bar" style="height: ${barHeight}%;"></div>
                         </div>
-                        <div class="chart-value">${stat.isCurrency ? formatCurrency(stat.value, 'DOP') : stat.value.toLocaleString()}</div>
+                        <div class="monthly-chart-label">${data.label}</div>
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
         </div>
     `;
+    
     container.innerHTML = chartHTML;
     lucide.createIcons();
 }
@@ -414,7 +440,6 @@ function initializeDashboard() {
         authSection.style.display = 'none';
         dashboardSection.style.display = 'block';
         updateDashboardUI();
-        renderGlobalStatsChart('globalStatsContainer');
     } else {
         authSection.style.display = 'flex';
         dashboardSection.style.display = 'none';
@@ -441,3 +466,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const appReadyEvent = new Event('appReady');
     document.dispatchEvent(appReadyEvent);
 });
+
+
