@@ -137,6 +137,24 @@ function formatCurrency(amount, currency = 'DOP') {
     return new Intl.NumberFormat('en-US', options).format(amount);
 }
 
+function compactCurrency(value, currency) {
+    let formattedValue;
+    if (currency === 'DOP') {
+        formattedValue = 'RD$';
+    } else {
+        formattedValue = '$';
+    }
+
+    if (value >= 1000000) {
+        return formattedValue + (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    }
+    if (value >= 1000) {
+        return formattedValue + (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+    return formatCurrency(value, currency).replace(/\.00$/, '');
+}
+
+
 // --- EMAIL NOTIFICATION SERVICE ---
 function initializeEmailService() {
     try {
@@ -248,6 +266,19 @@ function logout() {
     sessionStorage.removeItem('currentStoreId');
     sessionStorage.removeItem('isAdmin');
     window.location.href = 'index.html';
+}
+
+function resetLeaderboardData() {
+    const confirmation = confirm('Are you sure you want to reset all data? This action cannot be undone.');
+    if (confirmation) {
+        localStorage.removeItem('ecomLeaderStores');
+        localStorage.removeItem('ecomLeaderTransactions');
+        localStorage.removeItem('ecomLeaderSettings');
+        localStorage.removeItem('ecomLeaderboardTracking');
+        
+        alert('All data has been reset. The application will now reload.');
+        logout();
+    }
 }
 
 function updateDashboardUI() {
@@ -378,10 +409,8 @@ function renderGlobalStatsChart(containerId) {
         });
     }
 
-    // 2. Pre-process stores for quick lookup
+    // 2. Aggregate transaction data
     const storeMap = new Map(dataStore.stores.map(s => [s.id, { currency: s.currency }]));
-
-    // 3. Aggregate transaction data
     dataStore.transactions.forEach(tx => {
         const txDate = new Date(tx.timestamp);
         const txYear = txDate.getFullYear();
@@ -398,25 +427,40 @@ function renderGlobalStatsChart(containerId) {
         }
     });
 
-    // 4. Find max value for scaling bar heights
-    const maxSale = Math.max(...monthlyData.map(d => d.totalSales));
+    // 3. Determine chart scale
+    const allSales = monthlyData.map(d => d.totalSales);
+    const maxSale = allSales.length > 0 ? Math.max(...allSales) : 0;
+    // Create a "nice" upper bound for the Y-axis, ensuring a minimum for empty charts
+    const niceMaxSale = Math.max(50000, Math.ceil((maxSale || 1) / 5) * 5); 
 
-    // 5. Generate HTML for the new monthly chart
+    const yAxisLabels = [];
+    const numTicks = 5;
+    for (let i = numTicks; i >= 0; i--) {
+        const value = (niceMaxSale / numTicks) * i;
+        yAxisLabels.push(`<div>${compactCurrency(value, 'DOP')}</div>`);
+    }
+
+    // 4. Generate HTML for the new monthly chart with Y-Axis
     const chartHTML = `
         <div class="stats-chart-card">
             <h3><i data-lucide="bar-chart-big" class="lucide-icon"></i> Monthly Revenue (Last 12 Months)</h3>
-            <div class="monthly-chart-container">
-                ${monthlyData.map(data => {
-                    const barHeight = maxSale > 0 ? (data.totalSales / maxSale) * 100 : 0;
-                    return `
-                    <div class="monthly-chart-item">
-                        <div class="monthly-chart-value">${formatCurrency(data.totalSales, 'DOP')}</div>
-                        <div class="monthly-chart-bar-wrapper" title="${data.label} ${data.year}: ${formatCurrency(data.totalSales, 'DOP')}">
-                            <div class="monthly-chart-bar" style="height: ${barHeight}%;"></div>
+            <div class="chart-wrapper">
+                <div class="chart-y-axis">
+                    ${yAxisLabels.join('')}
+                </div>
+                <div class="monthly-chart-container">
+                    ${monthlyData.map(data => {
+                        const barHeight = niceMaxSale > 0 ? (data.totalSales / niceMaxSale) * 100 : 0;
+                        return `
+                        <div class="monthly-chart-item" title="${data.label} ${data.year}: ${formatCurrency(data.totalSales, 'DOP')}">
+                            <div class="monthly-chart-value">${formatCurrency(data.totalSales, 'DOP')}</div>
+                            <div class="monthly-chart-bar-wrapper">
+                                <div class="monthly-chart-bar" style="height: ${barHeight}%;"></div>
+                            </div>
+                            <div class="monthly-chart-label">${data.label}</div>
                         </div>
-                        <div class="monthly-chart-label">${data.label}</div>
-                    </div>
-                `}).join('')}
+                    `}).join('')}
+                </div>
             </div>
         </div>
     `;
@@ -424,7 +468,6 @@ function renderGlobalStatsChart(containerId) {
     container.innerHTML = chartHTML;
     lucide.createIcons();
 }
-
 
 // --- INITIALIZATION ---
 function initializeDashboard() {
@@ -435,36 +478,4 @@ function initializeDashboard() {
     const storeId = sessionStorage.getItem('currentStoreId');
     if (storeId) currentStore = dataStore.getStoreById(storeId);
     else currentStore = null;
-
-    if (currentStore) {
-        authSection.style.display = 'none';
-        dashboardSection.style.display = 'block';
-        updateDashboardUI();
-    } else {
-        authSection.style.display = 'flex';
-        dashboardSection.style.display = 'none';
-        showLogin();
-    }
-    
-    updateAdminVisibility();
-    lucide.createIcons();
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (!window.dataStore) {
-        window.dataStore = new DataStore();
-    }
-    dataStore = window.dataStore;
-
-    initializeEmailService();
-    
-    if (document.getElementById('authSection')) {
-        initializeDashboard();
-    }
-    
-    const appReadyEvent = new Event('appReady');
-    document.dispatchEvent(appReadyEvent);
-});
-
 
