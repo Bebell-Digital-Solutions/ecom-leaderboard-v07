@@ -1,4 +1,3 @@
-
 :root {
   --primary-color: #DF1783;
   --secondary-color: #8B5CF6;
@@ -185,6 +184,11 @@ body {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(223, 23, 131, 0.1);
 }
+.form-group input[disabled] {
+    background-color: var(--bg-secondary);
+    cursor: not-allowed;
+    color: var(--text-secondary);
+}
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
@@ -281,7 +285,7 @@ input[type=number] {
 
 /* Join & Admin Section */
 .join-section { margin-top: 40px; text-align: center; }
-.join-card { background: var(--bg-primary); border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); max-width: 780px; margin: 0 auto; }
+.join-card { background: var(--bg-primary); border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); max-width: 500px; margin: 0 auto; }
 .join-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
 .join-card p { color: var(--text-secondary); margin-bottom: 24px; font-size: 16px; }
 .join-card .btn { width: auto; padding: 12px 32px; }
@@ -290,11 +294,18 @@ input[type=number] {
 .admin-only { display: none; }
 
 /* Admin Table & Settings */
-.admin-table-header.wide, .admin-table-row.wide { grid-template-columns: 1fr 1fr 80px 100px 1fr 120px 80px 100px 180px; min-width: 1200px; }
+.admin-table-header.wide, .admin-table-row.wide {
+    display: grid;
+    grid-template-columns: 1fr 1fr 80px 100px 1fr 120px 80px 100px min-content;
+    gap: 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    min-width: 1200px;
+}
 .admin-table-row.wide > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-table-row .api-key { font-family: monospace; font-size: 12px; }
 .admin-actions { display: flex; gap: 10px; flex-wrap: nowrap; align-items: center; }
-.admin-table-row.wide > div:last-child { min-width: 170px; }
 
 .btn-icon { background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; transition: all 0.2s ease; white-space: nowrap; }
 .btn-icon .lucide-icon { width: 16px; height: 16px; flex-shrink: 0; }
@@ -322,7 +333,11 @@ input[type=number] {
 .modal-footer .btn { width: auto; }
 
 /* Global Stats Chart */
-.stats-chart-card { background-color: var(--bg-primary); border-radius: 16px; padding: 24px; margin-top: 40px; margin-bottom: 40px; box-shadow: var(--shadow-lg); }
+#globalStatsContainer {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.stats-chart-card { background-color: var(--bg-primary); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-lg); }
 .stats-chart-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
 .stats-chart-container { display: flex; flex-direction: column; gap: 16px; }
 .chart-item { display: grid; grid-template-columns: 120px 1fr 100px; align-items: center; gap: 12px; font-size: 14px; }
@@ -342,7 +357,7 @@ input[type=number] {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .admin-table-header.wide, .admin-table-row.wide { grid-template-columns: 1fr 1fr 80px 120px 80px 100px 180px; min-width: 1000px; }
+    .admin-table-header.wide, .admin-table-row.wide { grid-template-columns: 1fr 1fr 80px 120px 80px 100px min-content; min-width: 1000px; }
     .admin-table-row.wide > div:nth-child(4), .admin-table-header.wide > div:nth-child(4),
     .admin-table-row.wide > div:nth-child(5), .admin-table-header.wide > div:nth-child(5) { display: none; }
 }
@@ -360,8 +375,8 @@ input[type=number] {
   .podium-box { width: 100%; max-width: 200px; height: auto !important; min-height: 100px; }
   .table-header, .leaderboard-row { grid-template-columns: 60px 1fr 140px; gap: 12px; }
   .col-orders, .col-growth { display: none; }
-  .admin-table-header.wide, .admin-table-row.wide { grid-template-columns: 1fr 1fr 170px; padding: 16px; gap: 16px; min-width: auto; }
-  .admin-table-row.wide > div:nth-child(n+3):not(:last-child) { display: none; }
+  .admin-table-header.wide, .admin-table-row.wide { grid-template-columns: 1fr min-content; padding: 16px; gap: 16px; min-width: auto; }
+  .admin-table-row.wide > div:nth-child(n+2):not(:last-child) { display: none; }
   .chart-item { grid-template-columns: 80px 1fr 80px; font-size: 12px; }
 }
 
