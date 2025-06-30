@@ -1,4 +1,3 @@
-
 // Security check: Redirect non-admins immediately.
 if (sessionStorage.getItem('isAdmin') !== 'true') {
     alert('Access Denied: You must be an administrator to view this page.');
@@ -90,6 +89,7 @@ class BackendManager {
         const store = this.dataStore.getStoreById(storeId);
         if (store) {
             document.getElementById('editStoreId').value = store.id;
+            document.getElementById('editModalStoreId').value = store.id; // Populate the new read-only field
             document.getElementById('editStoreName').value = store.name;
             document.getElementById('editStoreUrl').value = store.url;
             document.getElementById('editStoreEmail').value = store.email;
